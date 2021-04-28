@@ -3,6 +3,7 @@
 // Modificado/comentado por Luis Alberto Rivera
 
 #include "noteCode.h"
+#include "SD.h"
 
 #include "wiring_private.h"
 #include "inc/hw_ints.h"
@@ -13,9 +14,11 @@
 
 const byte interruptPin2 = 17; //Boton 2
 const byte interruptPin1 = 31; //Boton 1
+const byte interruptPin3 = PB_3; //Boton 3
 volatile byte S1 = false;
 volatile byte S2 = false;
 volatile byte S3 = false;
+volatile byte S4 = true;
 
 int pre;
 //Terra's Theme
@@ -142,16 +145,29 @@ int d3[] = {
     8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
 };
 
+//Victory Fanfare
+int m4[] = {
+    NOTE_C5,NOTE_C5,NOTE_C5,NOTE_C5,NOTE_GS4,NOTE_AS4,NOTE_C5,NOTE_AS4,NOTE_C5
+};
+int d4[] = {
+    8,8,8,3,3,3,5,8,1
+};
+
 void setup(){
   //put your setup code here, to run once:
   //se llama la configuracion del timer:
   //configureTimer12A();
+  Serial.begin(9600);
+  delay(100);
+  
   pinMode(interruptPin1, INPUT_PULLUP);
   pinMode(interruptPin2, INPUT_PULLUP);
+  pinMode(interruptPin3, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(interruptPin1), state_Swap1, RISING);
-  //FALLING para cambiar de estado al presionar el boton indicado
   attachInterrupt(digitalPinToInterrupt(interruptPin2), state_Swap2, RISING);
+  attachInterrupt(digitalPinToInterrupt(interruptPin3), state_Swap3, RISING);
   //RISING para cambiar de estado al soltar el boton indicado
+  //FALLING para cambiar de estado al presionar el boton indicado
 }
 
 void loop(){
@@ -199,6 +215,19 @@ void loop(){
       }
     }
   }
+  if (S4 == true){
+    for(int note = 0; note<9; note++){
+      pre = 1000;
+      int t = pre/d4[note];
+      tone(PC_4, m4[note], t);
+      int pause = t*1.3;
+      delay(pause);
+      noTone(PC_4);
+      if (S4 == false){
+        break;
+      }
+    }
+  }
 }
 
 //configuracion de los TIMERS 1A y 2A
@@ -226,7 +255,6 @@ void configureTimer12A(){
 //interrupcion del TIMER1
 void ola(void){
   //reiniciar el TIMER1
-  
   ROM_TimerIntClear(TIMER1_BASE, TIMER_A);
 }
 
@@ -238,8 +266,31 @@ void wenas(void){
 
 void state_Swap1(){
   S1 = !S1;
+  if (S1 == true){
+    Serial.println("Now playing: Terra's Theme");
+  }
+  else {
+    Serial.println("M1 closed");
+  }
+  
 }
 
 void state_Swap2(){
   S2 = !S2;
+  if (S2 == true){
+    Serial.println("Now playing: Battle Theme");
+  }
+  else {
+    Serial.println("M2 closed");
+  }
+}
+
+void state_Swap3(){
+  S3 = !S3;
+  if (S3 == true){
+    Serial.println("Now playing: Prelude");
+  }
+  else {
+    Serial.println("M3 closed");
+  }
 }
