@@ -108,9 +108,17 @@ void setup() {
   LCD_Print(text1, 40, 160, 2, 0x0000, 0xffff);
   LCD_Print(text2, 60, 210, 1, 0x0000, 0xffff);
   LCD_Print(text3, 60, 225, 1, 0x0000, 0xffff);
-  delay (8000);
 
-  //ESCENA
+}
+//***************************************************************************************************************************************
+// Loop Infinito
+//***************************************************************************************************************************************
+
+void loop() {
+  while (digitalRead(start)==0){
+  }
+//ESCENA
+  
   digitalWrite(mus1, LOW);
   digitalWrite(mus2, HIGH);
   digitalWrite(mus3, LOW);
@@ -133,14 +141,30 @@ void setup() {
     x +=9;
   }  
   LCD_Bitmap(310, 160, 10, 80, cuadros3);
-  delay(5000);
-}
-//***************************************************************************************************************************************
-// Loop Infinito
-//***************************************************************************************************************************************
+  delay(9000);
 
-void loop() {
+//BATALLA 
+int Bdef = 1;
+int Catq = 10;
+int Tatq = 10;
 
+int vidaB = 1500;
+int vidaC = 150;
+int vidaT = 150;
+
+int atq1  = 0;
+int lim1  = 0;
+int esp1  = 0;
+int sel1  = 0;
+
+int atq2  = 0;
+int lim2  = 0;
+int esp2  = 0;
+int sel2  = 0;
+
+int turno = 0;
+
+while(vidaB >= 0){ 
   digitalWrite(mus1, LOW);
   digitalWrite(mus2, LOW);
   digitalWrite(mus3, HIGH);
@@ -156,88 +180,295 @@ String opb = "Limite";
 String opt = "Disminuir Defensa";
 String opc = "Potenciar Ataque";
 
+//OPCION 1
 if (digitalRead(op1a) == 1){
-  LCD_Print(opa, 15, 185, 1, 0xf800, 0x0019);
-  LCD_Print(opb, 15, 200, 1, 0xffff, 0x0019);
-  LCD_Print(opc, 15, 215, 1, 0xffff, 0x0019);
+  if(sel1==0){
+    LCD_Print(opa, 15, 185, 1, 0xf800, 0x0019);
+    LCD_Print(opb, 15, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opc, 15, 215, 1, 0xffff, 0x0019);
+    atq1=1;
+    lim1=0;
+    esp1=0;
+    sel1=1;
+  }
   if(digitalRead(op2a) == 1){   
-    LCD_Print(opa, 175, 185, 1, 0xf800, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xf800, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+      atq2=1;
+      lim2=0;
+      esp2=0;
+      sel2=1;
+    }
   }
   else if(digitalRead(op2b) == 1){
-    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xf800, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xf800, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+      atq2=0;
+      lim2=1;
+      esp2=0;
+      sel2=1;
+    }
   }
   else if(digitalRead(op2c) == 1){
-    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xf800, 0x0019);
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xf800, 0x0019);
+      atq2=0;
+      lim2=0;
+      esp2=1;
+      sel2=1;
+    }
   }
   else{
-    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);     
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+    }     
   } 
 }
-if (digitalRead(op1b) == 1){
-  LCD_Print(opa, 15, 185, 1, 0xffff, 0x0019);
-  LCD_Print(opb, 15, 200, 1, 0xf800, 0x0019);
-  LCD_Print(opc, 15, 215, 1, 0xffff, 0x0019);
+
+//OPCION 2
+
+else if (digitalRead(op1b) == 1){
+  if(sel1==0){
+    LCD_Print(opa, 15, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 15, 200, 1, 0xf800, 0x0019);
+    LCD_Print(opc, 15, 215, 1, 0xffff, 0x0019);
+    atq1=0;
+    lim1=1;
+    esp1=0;
+    sel1=1;
+  }
   if(digitalRead(op2a) == 1){   
-    LCD_Print(opa, 175, 185, 1, 0xf800, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xf800, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+      atq2=1;
+      lim2=0;
+      esp2=0;
+      sel2=1;
+    }
   }
   else if(digitalRead(op2b) == 1){
-    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xf800, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xf800, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+      atq2=0;
+      lim2=1;
+      esp2=0;
+      sel2=1;
+    }
   }
   else if(digitalRead(op2c) == 1){
-    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xf800, 0x0019);
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xf800, 0x0019);
+      atq2=0;
+      lim2=0;
+      esp2=1;
+      sel2=1;
+    }
   }
   else{
-    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);     
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+    }     
   } 
 }
-if (digitalRead(op1c) == 1){
-  LCD_Print(opa, 15, 185, 1, 0xffff, 0x0019);
-  LCD_Print(opb, 15, 200, 1, 0xffff, 0x0019);
-  LCD_Print(opc, 15, 215, 1, 0xf800, 0x0019);
+
+//OPCION 3
+
+else if (digitalRead(op1c) == 1){
+  if(sel1==0){
+    LCD_Print(opa, 15, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 15, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opc, 15, 215, 1, 0xf800, 0x0019);
+    atq1=0;
+    lim1=0;
+    esp1=1;
+    sel1=1;
+  }
   if(digitalRead(op2a) == 1){   
-    LCD_Print(opa, 175, 185, 1, 0xf800, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xf800, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+      atq2=1;
+      lim2=0;
+      esp2=0;
+      sel2=1;
+    }
   }
   else if(digitalRead(op2b) == 1){
-    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xf800, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xf800, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+      atq2=0;
+      lim2=1;
+      esp2=0;
+      sel2=1;
+    }
   }
   else if(digitalRead(op2c) == 1){
-    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xf800, 0x0019);
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xf800, 0x0019);
+      atq2=0;
+      lim2=0;
+      esp2=1;
+      sel2=1;
+    }
   }
   else{
-    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
-    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
-    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);     
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+    }     
   } 
-}else{
-  LCD_Print(opa, 15, 185, 1, 0xffff, 0x0019);
-  LCD_Print(opb, 15, 200, 1, 0xffff, 0x0019);
-  LCD_Print(opc, 15, 215, 1, 0xffff, 0x0019);
-  LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
-  LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
-  LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
 }
+else{
+  if(sel1==0){
+    LCD_Print(opa, 15, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 15, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opc, 15, 215, 1, 0xffff, 0x0019);
+  }
+  if(digitalRead(op2a) == 1){   
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xf800, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+      atq2=1;
+      lim2=0;
+      esp2=0;
+      sel2=1;
+    }
+  }
+  else if(digitalRead(op2b) == 1){
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xf800, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+      atq2=0;
+      lim2=1;
+      esp2=0;
+      sel2=1;
+    }
+  }
+  else if(digitalRead(op2c) == 1){
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xf800, 0x0019);
+      atq2=0;
+      lim2=0;
+      esp2=1;
+      sel2=1;
+    }
+  }
+  else{
+    if(sel2==0){
+      LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+      LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+      LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+    }     
+  } 
+}
+if (sel1 == 1 && sel2 == 1){
+  if (atq1==1){
+    int dano = (Catq*Bdef);
+    vidaB = vidaB-(Catq*Bdef);
+    String dato = (String)dano;
+    LCD_Print(dato, 40, 130, 1, 0xf800, 0x5a45);
+    delay (1500);
+    LCD_Print("        ", 40, 130, 1, 0xf800, 0x5a45);
+  }
+  if (esp2=1){
+    Bdef = Bdef * 2;
+    LCD_Print("Def reducida", 40, 130, 1, 0xffff, 0x5a45);
+    delay (1500);
+    LCD_Print("            ", 40, 130, 1, 0xffff, 0x5a45);
+  }
+  if (lim1==1){
+    if(turno >= 3){
+      int dano = Catq*10*Bdef;
+      vidaB = vidaB- (Catq*10*Bdef);
+      String dato = (String)dano;
+      LCD_Print(dato, 40, 130, 1, 0xf800, 0x5a45);
+      delay(1500);
+      LCD_Print("        ", 40, 130, 1, 0xf800, 0x5a45);
+    }
+    else{
+      LCD_Print("Faltan turnos", 40, 130, 1, 0xffff, 0x5a45); 
+      delay(1500);
+      LCD_Print("              ", 40, 130, 1, 0xf800, 0x5a45);
+    }
+  }
+  if (lim2==1){
+    if(turno >= 3){
+      int dano = Tatq*10*Bdef;
+      vidaB = vidaB- (Tatq*10*Bdef);
+      String dato = (String)dano;
+      LCD_Print(dato, 40, 130, 1, 0xf800, 0x5a45);
+      delay(1500);
+      LCD_Print("        ", 40, 130, 1, 0xf800, 0x5a45);
+    }
+    else{
+      LCD_Print("Faltan turnos", 40, 130, 1, 0xffff, 0x5a45);
+      delay(1500);
+      LCD_Print("              ", 40, 130, 1, 0xf800, 0x5a45); 
+    }
+  }
+  if (esp1==1){
+    Catq=Catq*2;
+    LCD_Print("ATQ aumentado", 210, 140, 1, 0xffff, 0x5a45);
+    delay (1500);
+    LCD_Print("             ", 210, 140, 1, 0xffff, 0x5a45);
+  }
+  if (atq2==1){
+    int dano = (Tatq*Bdef);
+    vidaB = vidaB-(Tatq*Bdef);
+    String dato = (String)dano;
+    LCD_Print(dato, 40, 130, 1, 0xf800, 0x5a45);
+    delay (1500);
+    LCD_Print("        ", 40, 130, 1, 0xf800, 0x5a45);    
+  }
+  atq1=0;
+  lim1=0;
+  esp1=0;
+  atq2=0;
+  lim2=0;
+  esp2=0;
+  sel1=0;
+  sel2=0;
+  turno = turno +1;
+}
+}
+FillRect(40, 60, 62, 63, 0x5a45);
+  digitalWrite(mus1, LOW);
+  digitalWrite(mus2, LOW);
+  digitalWrite(mus3, LOW);
+  digitalWrite(mus4, HIGH);
+  delay(2500);
+  digitalWrite(mus4, LOW);
+  delay(2500);
+  digitalWrite(mus2, HIGH);
+FillRect(0, 0, 320, 240, 0xffff);
+LCD_Print("VICTORIA", 90, 80, 2, 0xfde0, 0xffff);
+
 }
 //***************************************************************************************************************************************
 // Función para inicializar LCD
