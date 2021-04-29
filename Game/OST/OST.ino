@@ -3,7 +3,6 @@
 // Modificado/comentado por Luis Alberto Rivera
 
 #include "noteCode.h"
-#include "SD.h"
 
 #include "wiring_private.h"
 #include "inc/hw_ints.h"
@@ -12,15 +11,21 @@
 #include "driverlib/timer.h"
 #include "driverlib/sysctl.h"
 
-const byte interruptPin2 = 17; //Boton 2
-const byte interruptPin1 = 31; //Boton 1
-const byte interruptPin3 = PB_3; //Boton 3
-volatile byte S1 = false;
-volatile byte S2 = false;
-volatile byte S3 = false;
-volatile byte S4 = true;
-
+int PIN1;
+int PIN2;
+int PIN3;
+int PIN4;
+int Push1;
+int Push2;
+int Push3;
+int Push4;
+int Push5;
+int Push6;
+int Push7;
+int Push8;
+int controls;
 int pre;
+
 //Terra's Theme
 int m1[] = {
     NOTE_DS4,NOTE_GS4,NOTE_B4,NOTE_DS4,NOTE_GS4,NOTE_B4,NOTE_GS4,NOTE_DS4,NOTE_GS4,NOTE_B4,
@@ -159,19 +164,62 @@ void setup(){
   //configureTimer12A();
   Serial.begin(9600);
   delay(100);
-  
-  pinMode(interruptPin1, INPUT_PULLUP);
-  pinMode(interruptPin2, INPUT_PULLUP);
-  pinMode(interruptPin3, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(interruptPin1), state_Swap1, RISING);
-  attachInterrupt(digitalPinToInterrupt(interruptPin2), state_Swap2, RISING);
-  attachInterrupt(digitalPinToInterrupt(interruptPin3), state_Swap3, RISING);
-  //RISING para cambiar de estado al soltar el boton indicado
-  //FALLING para cambiar de estado al presionar el boton indicado
+  pinMode(PA_2,INPUT);
+  pinMode(PA_3,INPUT);
+  pinMode(PA_4,INPUT);
+  pinMode(PB_6,INPUT);
+  pinMode(PD_3,INPUT);
+  pinMode(PA_7,INPUT);
+  pinMode(PE_3,INPUT);
+  pinMode(PA_6,INPUT);
+  pinMode(PE_2,INPUT);
+  pinMode(PA_5,INPUT);
+  pinMode(PE_1,INPUT);
+  pinMode(PB_4,INPUT);
 }
 
 void loop(){
-  if (S1 == true){
+  PIN1 = digitalRead(PA_2);
+  PIN2 = digitalRead(PA_3);
+  PIN3 = digitalRead(PA_4);
+  PIN4 = digitalRead(PB_6);
+  Push1 = digitalRead(PD_3);
+  Push2 = digitalRead(PA_7);
+  Push3 = digitalRead(PE_3);
+  Push4 = digitalRead(PA_6);
+  Push5 = digitalRead(PE_2);
+  Push6 = digitalRead(PA_5);
+  Push7 = digitalRead(PE_1);
+  Push8 = digitalRead(PB_4);
+  controls = Push1 + Push2*2 + Push3*4 + Push4*8 + Push5*16 + Push6*32 + Push7*64 + Push8*128;
+  Serial.println(controls);
+  if (PIN1 == 1 && PIN2 == 0 && PIN3 == 0 && PIN4 == 0){
+    //Prelude
+    for(int note = 0; note<256; note++){
+      pre = 1100;
+      int t = pre/d3[note];
+      tone(PC_4, m3[note], t);
+      int pause = t*1.3;
+      delay(pause);
+      noTone(PC_4);
+      PIN1 = digitalRead(PA_2);
+      Push1 = digitalRead(PD_3);
+      Push2 = digitalRead(PA_7);
+      Push3 = digitalRead(PE_3);
+      Push4 = digitalRead(PA_6);
+      Push5 = digitalRead(PE_2);
+      Push6 = digitalRead(PA_5);
+      Push7 = digitalRead(PE_1);
+      Push8 = digitalRead(PB_4);
+      controls = Push1 + Push2*2 + Push3*4 + Push4*8 + Push5*16 + Push6*32 + Push7*64 + Push8*128;
+      Serial.println(controls);
+      if (PIN1 == 0){
+        break;
+      }
+    }
+  }
+  else if (PIN1 == 0 && PIN2 == 1 && PIN3 == 0 && PIN4 == 0){
+    //Terra's Theme
     for(int note = 0; note<63; note++){
       if (d1[note] == 1){
         pre=1100;
@@ -184,12 +232,24 @@ void loop(){
       int pause = t*1.3;
       delay(pause);
       noTone(PC_4);
-      if (S1 == false){
+      PIN2 = digitalRead(PA_3);
+      Push1 = digitalRead(PD_3);
+      Push2 = digitalRead(PA_7);
+      Push3 = digitalRead(PE_3);
+      Push4 = digitalRead(PA_6);
+      Push5 = digitalRead(PE_2);
+      Push6 = digitalRead(PA_5);
+      Push7 = digitalRead(PE_1);
+      Push8 = digitalRead(PB_4);
+      controls = Push1 + Push2*2 + Push3*4 + Push4*8 + Push5*16 + Push6*32 + Push7*64 + Push8*128;
+      Serial.println(controls);
+      if (PIN2 == 0){
         break;
       }
     }
   }
-  if (S2 == true) {
+  else if (PIN1 == 0 && PIN2 == 0 && PIN3 == 1 && PIN4 == 0){
+    //Battle Theme
     for(int note = 0; note<231; note++){
       pre = 1000;
       int t = pre/d2[note];
@@ -197,25 +257,25 @@ void loop(){
       int pause = t*1.3;
       delay(pause);
       noTone(PC_4);
-      if (S2 == false){
+      PIN3 = digitalRead(PA_4);
+      Push1 = digitalRead(PD_3);
+      Push2 = digitalRead(PA_7);
+      Push3 = digitalRead(PE_3);
+      Push4 = digitalRead(PA_6);
+      Push5 = digitalRead(PE_2);
+      Push6 = digitalRead(PA_5);
+      Push7 = digitalRead(PE_1);
+      Push8 = digitalRead(PB_4);
+      controls = Push1 + Push2*2 + Push3*4 + Push4*8 + Push5*16 + Push6*32 + Push7*64 + Push8*128;
+      Serial.println(controls);
+      if (PIN3 == 0){
         break;
       }
     }
   }
-  if (S3 == true) {
-    for(int note = 0; note<256; note++){
-      pre = 1000;
-      int t = pre/d3[note];
-      tone(PC_4, m3[note], t);
-      int pause = t*1.3;
-      delay(pause);
-      noTone(PC_4);
-      if (S3 == false){
-        break;
-      }
-    }
-  }
-  if (S4 == true){
+  else if (PIN1 == 0 && PIN2 == 0 && PIN3 == 0 && PIN4 == 1){
+    //Victory Fanfare
+    delay(1000);
     for(int note = 0; note<9; note++){
       pre = 1000;
       int t = pre/d4[note];
@@ -223,74 +283,20 @@ void loop(){
       int pause = t*1.3;
       delay(pause);
       noTone(PC_4);
-      if (S4 == false){
-        break;
-      }
+      PIN4 = digitalRead(PB_6);
+      Push1 = digitalRead(PD_3);
+      Push2 = digitalRead(PA_7);
+      Push3 = digitalRead(PE_3);
+      Push4 = digitalRead(PA_6);
+      Push5 = digitalRead(PE_2);
+      Push6 = digitalRead(PA_5);
+      Push7 = digitalRead(PE_1);
+      Push8 = digitalRead(PB_4);
+      controls = Push1 + Push2*2 + Push3*4 + Push4*8 + Push5*16 + Push6*32 + Push7*64 + Push8*128;
+      Serial.println(controls);
+      //if (PIN4 == 0){
+        //break;
+      //}
     }
-  }
-}
-
-//configuracion de los TIMERS 1A y 2A
-void configureTimer12A(){
-  ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1); // Enable Timer 1 Clock
-  ROM_IntMasterEnable(); // Enable Interrupts
-  
-  ROM_TimerConfigure(TIMER1_BASE, TIMER_CFG_PERIODIC); // Configure Timer Operation as Periodic
-  //80MHz / CustomValue = Freq(Hz)
-  ROM_TimerLoadSet(TIMER1_BASE, TIMER_A, 8000000);
-  //interrupciones definidas para cada TIMER
-  TimerIntRegister(TIMER1_BASE, TIMER_A, &ola);
-  ROM_TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT); // Timer 1A Interrupt when Timeout
-  ROM_TimerEnable(TIMER1_BASE, TIMER_A); // Start Timer 1A
-  ROM_IntEnable(INT_TIMER1A);  // Enable Timer 1A Interrupt
-
-  ROM_TimerConfigure(TIMER2_BASE, TIMER_CFG_PERIODIC); // Configure Timer Operation as Periodic
-  ROM_TimerLoadSet(TIMER2_BASE, TIMER_A, 8000000);
-  TimerIntRegister(TIMER2_BASE, TIMER_A, &wenas);
-  ROM_TimerIntEnable(TIMER2_BASE, TIMER_TIMA_TIMEOUT); // Timer 1A Interrupt when Timeout
-  ROM_TimerEnable(TIMER2_BASE, TIMER_A); // Start Timer 1A
-  ROM_IntEnable(INT_TIMER2A);  // Enable Timer 1A Interrupt
-}
-
-//interrupcion del TIMER1
-void ola(void){
-  //reiniciar el TIMER1
-  ROM_TimerIntClear(TIMER1_BASE, TIMER_A);
-}
-
-//interrupcion del TIMER2
-void wenas(void){
-  //reiniciar el TIMER2
-  ROM_TimerIntClear(TIMER2_BASE, TIMER_A);
-}
-
-void state_Swap1(){
-  S1 = !S1;
-  if (S1 == true){
-    Serial.println("Now playing: Terra's Theme");
-  }
-  else {
-    Serial.println("M1 closed");
-  }
-  
-}
-
-void state_Swap2(){
-  S2 = !S2;
-  if (S2 == true){
-    Serial.println("Now playing: Battle Theme");
-  }
-  else {
-    Serial.println("M2 closed");
-  }
-}
-
-void state_Swap3(){
-  S3 = !S3;
-  if (S3 == true){
-    Serial.println("Now playing: Prelude");
-  }
-  else {
-    Serial.println("M3 closed");
   }
 }
