@@ -24,9 +24,6 @@
 #include "font.h"
 #include "lcd_registers.h"
 
-#include <SPI.h>
-#include <SD.h>
-
 #define LCD_RST PD_0
 #define LCD_CS PD_1
 #define LCD_RS PD_2
@@ -34,13 +31,27 @@
 #define LCD_RD PE_1
 int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};
 
-File Root;
-File Afondo; 
+//CONTROLES// 
+
+#define op1a PA_5
+#define op1b PA_6
+#define op1c PA_7
+#define op2a PF_1
+#define op2b PE_3
+#define op2c PE_2
+#define start PE_5
+
+//MUSICA//
+
+#define mus1 PC_7
+#define mus2 PD_6
+#define mus3 PD_7
+#define mus4 PF_4
 
 //***************************************************************************************************************************************
 // Functions Prototypes
 //***************************************************************************************************************************************
-void SD_Init(void);
+
 void LCD_Init(void);
 void LCD_CMD(uint8_t cmd);
 void LCD_DATA(uint8_t data);
@@ -64,22 +75,46 @@ extern uint8_t fondo[];
 void setup() {
   SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ); 
   GPIOPadConfigSet(GPIO_PORTB_BASE, 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
-  SD_Init();
   LCD_Init();
   LCD_Clear(0x00);
-  pinMode(PA_3, OUTPUT);
+  
+//CONTROLES//
+  pinMode(PA_5, INPUT);
+  pinMode(PA_6, INPUT);
+  pinMode(PA_7, INPUT);
+  pinMode(PF_1, INPUT);
+  pinMode(PE_3, INPUT);
+  pinMode(PE_2, INPUT);
+  pinMode(PE_5, INPUT);
+  
+//MUSICA
+  pinMode(PC_7, OUTPUT);
+  pinMode(PD_6, OUTPUT);
+  pinMode(PD_7, OUTPUT);
+  pinMode(PF_4, OUTPUT);
+
+  //MENU
+  digitalWrite(mus1, HIGH);
+  digitalWrite(mus2, LOW);
+  digitalWrite(mus3, LOW);
+  digitalWrite(mus4, LOW);
+  
   FillRect(0, 0, 320, 240, 0xffff);
   LCD_Bitmap(7, 40, 305, 70, inicio);  
-
   String text1 = "Presione Start";
   String text2 = "Schneider Cat Studios";
   String text3 = "Derechos reservados, 2021";
+
   LCD_Print(text1, 40, 160, 2, 0x0000, 0xffff);
   LCD_Print(text2, 60, 210, 1, 0x0000, 0xffff);
   LCD_Print(text3, 60, 225, 1, 0x0000, 0xffff);
-  //delay (8000);
+  delay (8000);
 
-//LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
+  //ESCENA
+  digitalWrite(mus1, LOW);
+  digitalWrite(mus2, HIGH);
+  digitalWrite(mus3, LOW);
+  digitalWrite(mus4, LOW);
 
   for(int x= 0; x<320; x++){
     LCD_Bitmap(x, 0, 40, 160, fondo);
@@ -98,53 +133,112 @@ void setup() {
     x +=9;
   }  
   LCD_Bitmap(310, 160, 10, 80, cuadros3);
-
+  delay(5000);
 }
 //***************************************************************************************************************************************
 // Loop Infinito
 //***************************************************************************************************************************************
 
 void loop() {
-//LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
-/*while (start==0){
-  Mus1=1;
-  Mus2=0;
-  Mus3=0;
-  Mus4=0;
-}
-Mus1=0;
-Mus2=1;
-Mus3=0;
-Mus4=0;
-*/
-delay(1500);
-//for(int x = 320; x >250; x--){
-//    delay(15);
-//    int anim2 = (x/35)%2;
-//    LCD_Sprite(x, 100,
+
+  digitalWrite(mus1, LOW);
+  digitalWrite(mus2, LOW);
+  digitalWrite(mus3, HIGH);
+  digitalWrite(mus4, LOW);
+
 LCD_Sprite( 250, 100, 30, 47, cloud, 1, 1, 1, 0);
 LCD_Sprite( 220, 45, 30, 48, tifa, 2, 1, 1, 0); 
 LCD_Sprite( 40, 60, 62, 63, bomb, 1, 1, 0 ,0);
-delay(500);
-}
-//***************************************************************************************************************************************
-// Función para inicializar SD
-//***************************************************************************************************************************************
-void SD_Init(void)
-{
-  Serial.begin(115200);
-  SPI.setModule(0); 
+LCD_Print("Cloud", 72, 165, 2, 0xffff, 0x0019);
+LCD_Print("Tifa", 246, 165, 2, 0xffff, 0x0019); 
+String opa = "Ataque";
+String opb = "Limite";
+String opt = "Disminuir Defensa";
+String opc = "Potenciar Ataque";
 
-  Serial.print("Initializing SD card...");
-  pinMode(PA_3, OUTPUT);
-
-  if (!SD.begin(PA_3)) {//PA_3 es el CS
-    Serial.println("initialization failed");
-    return;
+if (digitalRead(op1a) == 1){
+  LCD_Print(opa, 15, 185, 1, 0xf800, 0x0019);
+  LCD_Print(opb, 15, 200, 1, 0xffff, 0x0019);
+  LCD_Print(opc, 15, 215, 1, 0xffff, 0x0019);
+  if(digitalRead(op2a) == 1){   
+    LCD_Print(opa, 175, 185, 1, 0xf800, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
   }
-  Serial.println("initialization done.");
+  else if(digitalRead(op2b) == 1){
+    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xf800, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+  }
+  else if(digitalRead(op2c) == 1){
+    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xf800, 0x0019);
+  }
+  else{
+    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);     
+  } 
 }
-
+if (digitalRead(op1b) == 1){
+  LCD_Print(opa, 15, 185, 1, 0xffff, 0x0019);
+  LCD_Print(opb, 15, 200, 1, 0xf800, 0x0019);
+  LCD_Print(opc, 15, 215, 1, 0xffff, 0x0019);
+  if(digitalRead(op2a) == 1){   
+    LCD_Print(opa, 175, 185, 1, 0xf800, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+  }
+  else if(digitalRead(op2b) == 1){
+    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xf800, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+  }
+  else if(digitalRead(op2c) == 1){
+    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xf800, 0x0019);
+  }
+  else{
+    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);     
+  } 
+}
+if (digitalRead(op1c) == 1){
+  LCD_Print(opa, 15, 185, 1, 0xffff, 0x0019);
+  LCD_Print(opb, 15, 200, 1, 0xffff, 0x0019);
+  LCD_Print(opc, 15, 215, 1, 0xf800, 0x0019);
+  if(digitalRead(op2a) == 1){   
+    LCD_Print(opa, 175, 185, 1, 0xf800, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+  }
+  else if(digitalRead(op2b) == 1){
+    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xf800, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+  }
+  else if(digitalRead(op2c) == 1){
+    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xf800, 0x0019);
+  }
+  else{
+    LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+    LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+    LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);     
+  } 
+}else{
+  LCD_Print(opa, 15, 185, 1, 0xffff, 0x0019);
+  LCD_Print(opb, 15, 200, 1, 0xffff, 0x0019);
+  LCD_Print(opc, 15, 215, 1, 0xffff, 0x0019);
+  LCD_Print(opa, 175, 185, 1, 0xffff, 0x0019);
+  LCD_Print(opb, 175, 200, 1, 0xffff, 0x0019);
+  LCD_Print(opt, 175, 215, 1, 0xffff, 0x0019);
+}
+}
 //***************************************************************************************************************************************
 // Función para inicializar LCD
 //***************************************************************************************************************************************
@@ -399,7 +493,7 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
   
   char charInput ;
   int cLength = text.length();
-  Serial.println(cLength,DEC);
+ // Serial.println(cLength,DEC);
   int charDec ;
   int c ;
   int charHex ;
@@ -407,7 +501,7 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
   text.toCharArray(char_array, cLength+1) ;
   for (int i = 0; i < cLength ; i++) {
     charInput = char_array[i];
-    Serial.println(char_array[i]);
+//    Serial.println(char_array[i]);
     charDec = int(charInput);
     digitalWrite(LCD_CS, LOW);
     SetWindows(x + (i * fontXSize), y, x + (i * fontXSize) + fontXSize - 1, y + fontYSize );
